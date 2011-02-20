@@ -37,11 +37,11 @@
  * \section Usage
  * Usage information may be obtained issuing:
  * \code
- * findMinimum --usage
+ * simulator --usage
  * \endcode
  * The generic usage of findMinimum would be:
  * \code
- * findMinimum options [--key=value] file
+ * simulator options [--key=value] file
  * \endcode
  * Where options is one of the arguments detailled hereafter and file is a 
  * configuration file.
@@ -61,18 +61,20 @@
 #include <iostream>
 #include "common.h"
 #include "integrator.h"
+using std::cerr;
+using std::endl;
 int main(int argc, char *argv[]) {
     ConfigMap config;
     if(!parseOptions(argc,argv,config)) {        //Parse cmd line options
-        std::cerr << "==> Try '" << argv[0] << " --usage'" << std::endl;
+        cerr << "==> Try '" << argv[0] << " --usage'" << endl;
         return -1;
     }
-    if(config["usage"].size()>0||config["help"].size()>0) {
+    if(config.find("usage")!=config.end()||config.find("help")!=config.end()) {
         printUsage(argv[0]);
         return -1;
     }
     if(!parseConfig(config)) {
-        std::cerr << "==> Try 'man " << argv[0] << "'" << std::endl;
+        cerr << "==> Try 'man " << argv[0] << "'" << endl;
         return -1;
     }
     Integrator *integrator=initIntegrator(config);

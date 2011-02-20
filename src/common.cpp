@@ -1,4 +1,4 @@
-/* This file is a part of findMinimum. {{{
+/* This file is a part of Evolution. {{{
  * Copyright (C) 2010 Romain Dubessy
  *
  * findMinimum is free software: you can redistribute it and/or modify 
@@ -19,6 +19,11 @@
 #include <iostream>
 #include <fstream>
 #include "common.h"
+/*! \file */
+using std::cerr;
+using std::endl;
+using std::ifstream;
+using std::ios;
 /* readString: {{{ */
 bool readString(string s, ConfigMap &config, string &appKey, bool verbose) {
     bool res=true;
@@ -38,33 +43,21 @@ bool readString(string s, ConfigMap &config, string &appKey, bool verbose) {
                     cerr << "[I] Found marker : '" << appKey << "'." << endl;
                 appKey+="::";
         }
-    }
-    if(s[0]=='<') {                              //Option
-        int indexA=s.find(',');
-        int indexB=s.find('=');
-        if(indexA>indexB)
-            res=false;
-        switch(indexA) {
+    } else {
+        int index=s.find('=');
+        switch(index) {
             case -1:
-            case 1:
-                res=false;
-                break;
-            default:
-                break;
-        }
-        switch(indexB) {
-            case -1:
-            case 2:
+            case 0:
                 res=false;
                 break;
             default:
                 break;
         }
         if(res) {
-            string key=s.substr(1,indexA-1);
+            string key=s.substr(0,index);
             if(verbose)
                 cerr << "[I] Found option : '" << key << "'." << endl;
-            string value=s.substr(indexB+1);
+            string value=s.substr(index+1);
             if(config[appKey+key].size()>0) {
                 if(verbose)
                     cerr << "[I] Previous value kept : '" << appKey+key << "="
@@ -173,7 +166,8 @@ bool parseConfig(ConfigMap &config) {
     }
     bool res=true;
     bool verbose=false;
-    if(config["general::verbose"].size()>0)
+    ConfigMap::iterator it=config.find("general::verbose");
+    if(it!=config.end())
         verbose=true;
     while(file) {
         string s;
@@ -187,10 +181,11 @@ bool parseConfig(ConfigMap &config) {
 /* }}} */
 /* getConfig: {{{ */
 int getConfig(ConfigMap &config, const string &name, int def) {
-    if(config[name].size()>0)
+    ConfigMap::iterator it=config.find(name);
+    if(it!=config.end())
         return atoi(config[name].c_str());
-    cerr << "[W] Key : '" << name.c_str() 
-        << "' not found, using default value : " << def << endl;
+    cerr << "[W] Key : '" << name  << "' not found, using default value : " 
+        << def << endl;
     return def;
 }
 double getConfig(ConfigMap &config, const string &name, double def) {

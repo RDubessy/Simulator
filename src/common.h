@@ -3,7 +3,8 @@
 #define COMMON_H
 #include <string>
 #include <map>
-using namespace std;
+using std::map;
+using std::string;
 /*! \brief This type contains the options, as a map of string pairs, keys and
  * values */
 typedef map<string,string> ConfigMap;
@@ -21,5 +22,5 @@ bool parseConfig(ConfigMap &);
 int getConfig(ConfigMap &,const string &,int);
 double getConfig(ConfigMap &,const string &,double);
 string getConfig(ConfigMap &,const string &,const string &);
-#endif
+#endif //COMMON_H
 /* common.h */
